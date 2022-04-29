@@ -22,8 +22,15 @@ const client = new MongoClient(uri);
 async function run() {
   try {
     await client.connect();
-
     const items = client.db("pc-world").collection("item");
+
+    // GET all items
+    app.get("/items", async (req, res) => {
+      const query = {};
+      const cursor = items.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
   } finally {
     // await client.close();
   }
