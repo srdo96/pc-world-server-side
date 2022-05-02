@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const express = require("express");
 const { get } = require("express/lib/response");
@@ -30,6 +30,14 @@ async function run() {
       const cursor = items.find(query);
       const result = await cursor.toArray();
       res.send(result);
+    });
+
+    // GET specific item using params
+    app.get("/item/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const item = await items.findOne(query);
+      res.send(item);
     });
   } finally {
     // await client.close();
