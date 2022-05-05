@@ -39,6 +39,21 @@ async function run() {
       const item = await items.findOne(query);
       res.send(item);
     });
+
+    // Update quantity
+    app.put("/item/:id", async (req, res) => {
+      const id = req.params.id;
+      const qty = req.body;
+      const filter = { _id: ObjectId(id) };
+      const option = { upsert: true };
+      const update = {
+        $set: {
+          quantity: qty.quantity,
+        },
+      };
+      const result = await items.updateOne(filter, update, option);
+      res.send(result);
+    });
   } finally {
     // await client.close();
   }
