@@ -1,7 +1,7 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const express = require("express");
-const { get } = require("express/lib/response");
+// const { get } = require("express/lib/response");
 require("dotenv").config();
 
 const port = process.env.PORT || 5000;
@@ -38,6 +38,19 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const item = await items.findOne(query);
       res.send(item);
+    });
+
+    //GET item by email
+    app.post("/myitems", async (req, res) => {
+      const email = req.body;
+      console.log("my mail:", email);
+      const query = email;
+      console.log(query);
+      const cursor = items.find(query);
+
+      const result = await cursor.toArray();
+      console.log(result);
+      res.send(result);
     });
 
     // Update quantity
