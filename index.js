@@ -1,6 +1,7 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const express = require("express");
+const jwt = require("jsonwebtoken");
 // const { get } = require("express/lib/response");
 require("dotenv").config();
 
@@ -23,6 +24,15 @@ async function run() {
   try {
     await client.connect();
     const items = client.db("pc-world").collection("item");
+
+    //Auth JWT
+    app.post("/signin", async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign({ user }, process.env.PRIVATE_KEY, {
+        expiresIn: "20d",
+      });
+      res.send({ token });
+    });
 
     // GET all items
     app.get("/items", async (req, res) => {
