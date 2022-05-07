@@ -2,7 +2,6 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 const express = require("express");
 const jwt = require("jsonwebtoken");
-// const { get } = require("express/lib/response");
 require("dotenv").config();
 
 const port = process.env.PORT || 5000;
@@ -65,7 +64,21 @@ async function run() {
       res.send(item);
     });
 
-    //GET item by email
+    // Count API
+    app.get("/count", async (req, res) => {
+      const count = await items.estimatedDocumentCount();
+      res.send({ count });
+    });
+
+    // sort by sold API
+    app.get("/sortSold", async (req, res) => {
+      const cursor = items.find().sort({ sold: -1 });
+      const result = await cursor.toArray();
+      const topItem = result.slice(0, 3);
+      res.send(topItem);
+    });
+
+    // item by email
     app.post("/myitems", verifyJWT, async (req, res) => {
       const decodedEmail = req.decoded.user.email;
       const email = req.body.email;
@@ -75,6 +88,14 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
       } else res.status(403).send({ message: "Forbidden access" });
+    });
+
+    // Add item
+    app.post("/addnewitem", async (req, res) => {
+      const item = req.body;
+      const result = await items.insertOne(item);
+      console.log(result);
+      res.send(result);
     });
 
     // Update quantity
@@ -89,14 +110,6 @@ async function run() {
         },
       };
       const result = await items.updateOne(filter, update, option);
-      res.send(result);
-    });
-
-    // Add item
-    app.post("/addnewitem", async (req, res) => {
-      const item = req.body;
-      const result = await items.insertOne(item);
-      console.log(result);
       res.send(result);
     });
 
