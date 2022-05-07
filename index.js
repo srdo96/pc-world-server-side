@@ -64,18 +64,14 @@ async function run() {
       res.send(item);
     });
 
-    // Count API
-    app.get("/count", async (req, res) => {
-      const count = await items.estimatedDocumentCount();
-      res.send({ count });
-    });
-
-    // sort by sold API
-    app.get("/sortSold", async (req, res) => {
-      const cursor = items.find().sort({ sold: -1 });
+    // sort by Qty API and Count total item
+    app.get("/sortQty", async (req, res) => {
+      const cursor = items.find().sort({ quantity: -1 });
       const result = await cursor.toArray();
-      const topItem = result.slice(0, 3);
-      res.send(topItem);
+      const topItems = result.slice(0, 3);
+
+      const count = await items.estimatedDocumentCount();
+      res.send({ count, topItems });
     });
 
     // item by email
