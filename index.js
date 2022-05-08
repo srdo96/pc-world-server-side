@@ -69,7 +69,6 @@ async function run() {
       const cursor = items.find().sort({ quantity: -1 });
       const result = await cursor.toArray();
       const topItems = result.slice(0, 3);
-
       const count = await items.estimatedDocumentCount();
       res.send({ count, topItems });
     });
@@ -90,7 +89,6 @@ async function run() {
     app.post("/addnewitem", async (req, res) => {
       const item = req.body;
       const result = await items.insertOne(item);
-      console.log(result);
       res.send(result);
     });
 
